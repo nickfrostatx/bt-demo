@@ -3,6 +3,39 @@
 from io import BufferedReader, BytesIO
 
 
+def dumps(obj):
+    buf = BytesIO()
+    dump(obj, buf)
+    return buf.getvalue()
+
+
+def dump(obj, stream):
+    if isinstance(obj, int):
+        stream.write(b'i')
+        encode_int(obj, b'e', stream)
+    elif isinstance(obj, list):
+        stream.write(b'l')
+        for v in obj:
+            dump(v, stream)
+        stream.write(b'e')
+    elif isinstance(obj, dict):
+        stream.write(b'd')
+        for k in sorted(obj.keys()):
+            dump(k, stream)
+            dump(obj[k], stream)
+        stream.write(b'e')
+    elif isinstance(obj, bytes):
+        encode_int(len(obj), b':', stream)
+        stream.write(obj)
+    else:
+        raise ValueError('Type %s not supported' % type(obj).__name__)
+
+
+def dump_int(value, term, stream):
+    stream.write(str(value).encode())
+    stream.write(term)
+
+
 def loads(data):
     if not isinstance(data, bytes):
         raise ValueError('loads expects bytes')
