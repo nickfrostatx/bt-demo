@@ -21,7 +21,7 @@ def dump(obj, stream):
     elif isinstance(obj, dict):
         stream.write(b'd')
         for k in sorted(obj.keys()):
-            dump(k, stream)
+            dump(want_bytes(k), stream)
             dump(obj[k], stream)
         stream.write(b'e')
     elif isinstance(obj, bytes):
@@ -34,6 +34,12 @@ def dump(obj, stream):
 def dump_int(value, term, stream):
     stream.write(str(value).encode())
     stream.write(term)
+
+
+def want_bytes(value):
+    if isinstance(value, bytes):
+        return value
+    return value.encode('utf-8')
 
 
 def loads(data):
