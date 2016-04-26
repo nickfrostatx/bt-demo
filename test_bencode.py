@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from bencode import loads, dumps
+import pytest
 
 
 def test_dump_good_data():
@@ -13,3 +14,10 @@ def test_dump_good_data():
     assert dumps({}) == b'de'
     assert dumps({b'key': b'value', b'abc': [1, 2, 3]}) == \
         b'd3:abcli1ei2ei3ee3:key5:valuee'
+
+
+def test_dump_bad_data():
+    for data in (u'abc', set([1]), ):
+        with pytest.raises(ValueError) as exc:
+            dumps(data)
+        assert 'Type %s not supported' % type(data).__name__ in str(exc)
