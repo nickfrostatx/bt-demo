@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+"""JSON-like bencode serialization"""
 from io import BufferedReader, BytesIO
 
 
@@ -12,7 +12,7 @@ def dumps(obj):
 def dump(obj, stream):
     if isinstance(obj, int):
         stream.write(b'i')
-        encode_int(obj, b'e', stream)
+        dump_int(obj, b'e', stream)
     elif isinstance(obj, list):
         stream.write(b'l')
         for v in obj:
@@ -25,7 +25,7 @@ def dump(obj, stream):
             dump(obj[k], stream)
         stream.write(b'e')
     elif isinstance(obj, bytes):
-        encode_int(len(obj), b':', stream)
+        dump_int(len(obj), b':', stream)
         stream.write(obj)
     else:
         raise ValueError('Type %s not supported' % type(obj).__name__)
