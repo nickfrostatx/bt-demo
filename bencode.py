@@ -9,31 +9,32 @@ def dumps(obj):
     return buf.getvalue()
 
 
-def dump(obj, stream):
+def dump(obj, stream, write=None):
+    write = write or stream.write
     if isinstance(obj, int):
-        stream.write(b'i')
-        dump_int(obj, b'e', stream)
+        write(b'i')
+        dump_int(obj, b'e', write)
     elif isinstance(obj, list):
-        stream.write(b'l')
+        write(b'l')
         for v in obj:
-            dump(v, stream)
-        stream.write(b'e')
+            dump(v, stream, write)
+        write(b'e')
     elif isinstance(obj, dict):
-        stream.write(b'd')
+        write(b'd')
         for k in sorted(obj.keys()):
-            dump(want_bytes(k), stream)
-            dump(obj[k], stream)
-        stream.write(b'e')
+            dump(want_bytes(k), stream, write)
+            dump(obj[k], stream, write)
+        write(b'e')
     elif isinstance(obj, bytes):
-        dump_int(len(obj), b':', stream)
-        stream.write(obj)
+        dump_int(len(obj), b':', write)
+        write(obj)
     else:
         raise ValueError('Type %s not supported' % type(obj).__name__)
 
 
-def dump_int(value, term, stream):
-    stream.write(str(value).encode())
-    stream.write(term)
+def dump_int(value, term, write):
+    write(str(value).encode())
+    write(term)
 
 
 def want_bytes(value):
