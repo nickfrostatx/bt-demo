@@ -27,7 +27,6 @@ def main(argv):
             data['info']['pieces'] += hashlib.sha1(piece).digest()
             piece = f.read(piece_length)
 
-
     bencode.dump(data, open(filename + '.torrent', 'wb'))
     return 0
 
