@@ -81,10 +81,10 @@ def main():
     bencode.dump(info[b'info'], None, m.update)
     info_hash = m.digest()
 
-    piece_size = info[b'info'][b'piece size']
+    piece_size = info[b'info'][b'piece length']
     length = info[b'info'][b'length']
     piece_hashes = info[b'info'][b'pieces'][::20]
-    num_pieces = int(math.ceil(length / float(piece_size)))
+    num_pieces = len(info[b'info'][b'pieces']) // 20
     block_size = 2 ** 14
 
     port = random.randint(30000, 40000)
@@ -120,3 +120,7 @@ def main():
                 index += 1
             else:
                 print('Hash check failed, retrying')
+
+
+if __name__ == '__main__':
+    main()
