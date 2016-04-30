@@ -29,7 +29,7 @@ def recv_exact(sock, length):
 def handshake(sock, info_hash, my_id):
     """BT handshake, return the peer's id"""
     protocol_name = b'BitTorrent'
-    prefix = b'\x19'
+    prefix = b'\x13'
     header = protocol_name + b'\0' * 8 + info_hash
     sock.send(prefix + header + my_id)
     # Fail on first byte
@@ -99,7 +99,8 @@ def main():
 
         if handshake(sock, info_hash, my_id) != their_id:
             print('Got different peer id from handshake, terminating')
-            break
+            sock.close()
+            continue
         print('Handshake successful')
 
         index = 0
